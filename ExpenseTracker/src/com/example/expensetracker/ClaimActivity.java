@@ -1,6 +1,17 @@
 package com.example.expensetracker;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+import com.google.gson.Gson;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -42,7 +53,7 @@ public class ClaimActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if(ClaimListController.getCurrentClaim().getSubmitted()){
-					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT);
+					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				Intent intent = new Intent(ClaimActivity.this, AddExpenseActivity.class);
@@ -57,7 +68,7 @@ public class ClaimActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if(ClaimListController.getCurrentClaim().getSubmitted()){
-					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT);
+					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				Intent intent = new Intent(ClaimActivity.this, RemoveExpenseActivity.class);
@@ -70,7 +81,7 @@ public class ClaimActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if(ClaimListController.getCurrentClaim().getSubmitted()){
-					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT);
+					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				Intent intent = new Intent(ClaimActivity.this, EditClaimInfoActivity.class);
@@ -82,9 +93,35 @@ public class ClaimActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
+				if(ClaimListController.getCurrentClaim().getSubmitted()){
+					Toast.makeText(ClaimActivity.this, "Claim submitted. No further changes allowed.", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				AlertDialog.Builder builder = new Builder(ClaimActivity.this);
+				builder.setTitle("Submit");
+				builder.setMessage("Do you wish to submit your claim? Warning no further changes can be made to this claim once submitted");
+				builder.setPositiveButton("submit", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						ClaimListController.getCurrentClaim().setClaimSubmitted();
+						saveList();
+					}
+				});
+				AlertDialog dialog = builder.create();
+				dialog.show();
 			}
 		});
+		
+		email.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(ClaimActivity.this, SendEmailActivity.class);
+				startActivity(intent);
+			}
+		});
+			
 	}
 	
 	@Override
@@ -124,5 +161,23 @@ public class ClaimActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void saveList(){
+		Gson gson = new Gson();
+		
+		try {
+			FileOutputStream fos = openFileOutput(MainActivity.FILENAME, 0);
+			OutputStreamWriter osw = new OutputStreamWriter(fos);
+			gson.toJson(ClaimListController.getClaimList(), osw);
+			osw.flush();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

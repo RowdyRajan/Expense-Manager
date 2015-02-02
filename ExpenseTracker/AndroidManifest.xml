@@ -54,6 +54,10 @@
             android:name=".EditExpenseItemActivity"
             android:label="@string/title_activity_edit_expense_item" >
         </activity>
+        <activity
+            android:name=".SendEmailActivity"
+            android:label="@string/title_activity_send_email" >
+        </activity>
     </application>
 
 </manifest>

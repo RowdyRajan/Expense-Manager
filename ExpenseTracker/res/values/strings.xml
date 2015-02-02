@@ -12,5 +12,6 @@
     <string name="title_activity_edit_claim_info">EditClaimInfoActivity</string>
     <string name="title_activity_expense_item">ExpenseItemActivity</string>
     <string name="title_activity_edit_expense_item">EditExpenseItemActivity</string>
+    <string name="title_activity_send_email">SendEmailActivity</string>
 
 </resources>
